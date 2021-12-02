@@ -48,7 +48,7 @@ client.on('interactionCreate', async interaction => {
 
 		 if(_subcommand === 'event'){
 			
-				await interaction.reply('https://nxdf-airdrop.web.app/');
+				await interaction.reply(`https://nxdf-airdrop.web.app/user_id=${user.id}`);
 		}
 		
 	}
