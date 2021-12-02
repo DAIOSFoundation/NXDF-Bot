@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  discordBot:
+    image: discordbot
+    container_name: discordBot
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - NODE_APP_INSTANCE=${NODE_APP_INSTANCE}
+    restart: always
+    ports:
+      - "80:80"
