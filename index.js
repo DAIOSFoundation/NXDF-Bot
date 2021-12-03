@@ -47,8 +47,19 @@ client.on('interactionCreate', async interaction => {
 	 if (commandName === 'nxdf') {
 
 		 if(_subcommand === 'event'){
+
 			
-				await interaction.reply(`https://nxdf-airdrop.web.app/user_id=${user.id}`);
+			const exampleEmbed = new MessageEmbed()
+			.setTitle("NeXt-DeFi airdrop event page")
+			// 헤드 사진 자리 
+			.setDescription(`NXDF is run by Decentralized Autonomous Organization.
+			GNXD staking power always belongs to ownership of community.`)
+			// 오른쪽 사진 자리
+			// 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+			.setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
+			.setURL(`https://nxdf-airdrop.web.app/user_id=${user.id}`)
+		
+			interaction.reply({ embeds: [exampleEmbed] });
 		}
 		
 	}
