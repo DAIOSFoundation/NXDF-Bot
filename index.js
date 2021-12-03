@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -48,7 +48,7 @@ client.on('interactionCreate', async interaction => {
 
 		 if(_subcommand === 'event'){
 
-			
+
 			const exampleEmbed = new MessageEmbed()
 			.setTitle("NeXt-DeFi airdrop event page")
 			// 헤드 사진 자리 
