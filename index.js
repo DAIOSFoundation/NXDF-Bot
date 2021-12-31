@@ -1,6 +1,6 @@
 // Require the necessary discord.js classes
 const { Client, Intents, MessageEmbed } = require('discord.js');
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder, userMention } = require('@discordjs/builders');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { clientId, guildId, token } = require('./config.json');
@@ -59,7 +59,9 @@ client.on('interactionCreate', async interaction => {
 			.setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
 			.setURL(`https://nxdf-airdrop.web.app/?user_id=${user.id}`)
 		
-			interaction.reply({ embeds: [exampleEmbed] });
+		
+			user.send({embeds: [exampleEmbed] })
+			interaction.reply(`${user}, Check your DM.`);
 		}
 		
 	}
