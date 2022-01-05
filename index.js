@@ -58,12 +58,10 @@ client.on('interactionCreate', async interaction => {
 			// 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
 			.setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
 			.setURL(`https://nxdf-airdrop.web.app/?user_id=${user.id}`)
-		
-		
-			user.send({embeds: [exampleEmbed] })
-			interaction.reply(`${user}, Check your DM.`);
+
+
+			await interaction.reply({embeds: [exampleEmbed], ephemeral: true});
 		}
-		
 	}
 });
 
