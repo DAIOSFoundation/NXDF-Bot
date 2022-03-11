@@ -43,17 +43,19 @@ client.on("interactionCreate", async (interaction) => {
 
   if (commandName === "nxdf") {
     if (_subcommand === "event") {
-      const exampleEmbed = new MessageEmbed().setTitle(
-        "NeXt-DeFi airdrop event page"
-      );
-      // .setTitle("NeXt-DeFi airdrop event page")
-      // // 헤드 사진 자리
-      // .setDescription(`NXDF is run by Decentralized Autonomous Organization.
-      // GNXD staking power always belongs to ownership of community.`)
-      // // 오른쪽 사진 자리
-      // // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
-      // .setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
-      // .setURL(`https://nxdf-airdrop.web.app/?user_id=${user.id}`)
+      const exampleEmbed = new MessageEmbed()
+        .setTitle("NeXt-DeFi Lottery Event Page")
+        // 헤드 사진 자리
+        .setDescription(
+          `NXDF is run by Decentralized Autonomous Organization.
+			GNXD staking power always belongs to ownership of community.`
+        )
+        // 오른쪽 사진 자리
+        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+        .setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
+        .setURL(
+          `https://nxdf-airdrop.web.app/events/lotto.html?user_id=${user.id}`
+        );
 
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
     }
