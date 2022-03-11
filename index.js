@@ -10,7 +10,10 @@ const commands = [
     .setName("nxdf")
     .setDescription("Replies with boop!")
     .addSubcommand((subcommand) =>
-      subcommand.setName("event").setDescription("Info about a user")
+      subcommand.setName("event").setDescription("go to event page")
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName("lotto").setDescription("go to lottery page")
     ),
 ].map((command) => command.toJSON());
 
@@ -42,7 +45,7 @@ client.on("interactionCreate", async (interaction) => {
   const { _subcommand, _hoistedOptions } = options;
 
   if (commandName === "nxdf") {
-    if (_subcommand === "event") {
+    if (_subcommand === "lotto") {
       const exampleEmbed = new MessageEmbed()
         .setTitle("NeXt-DeFi Lottery Event Page")
         // 헤드 사진 자리
@@ -57,6 +60,21 @@ client.on("interactionCreate", async (interaction) => {
           `https://nxdf-airdrop.web.app/events/lotto.html?user_id=${user.id}`
         );
 
+      await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
+    } else if (_subcommand === "event") {
+      const exampleEmbed = new MessageEmbed()
+        .setTitle("NeXt-DeFi airdrop event page")
+        // 헤드 사진 자리
+        .setDescription(
+          `NXDF is run by Decentralized Autonomous Organization.
+			GNXD staking power always belongs to ownership of community.`
+        )
+        // 오른쪽 사진 자리
+        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+        .setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
+        .setURL(`https://nxdf-airdrop.web.app/?user_id=${user.id}`);
+
+      await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
     }
   }
