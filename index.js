@@ -7,13 +7,10 @@ const { clientId, guildId, token } = require("./config.json");
 
 const commands = [
   new SlashCommandBuilder()
-    .setName("nxdf")
+    .setName("treasures")
     .setDescription("Replies with boop!")
     .addSubcommand((subcommand) =>
-      subcommand.setName("event").setDescription("go to event page")
-    )
-    .addSubcommand((subcommand) =>
-      subcommand.setName("lotto").setDescription("go to lottery page")
+      subcommand.setName("club").setDescription("go to introduce page")
     ),
 ].map((command) => command.toJSON());
 
@@ -44,37 +41,16 @@ client.on("interactionCreate", async (interaction) => {
   const { commandName, user, options } = interaction;
   const { _subcommand, _hoistedOptions } = options;
 
-  if (commandName === "nxdf") {
-    if (_subcommand === "lotto") {
+  if (commandName === "treasures") {
+    if (_subcommand === "club") {
       const exampleEmbed = new MessageEmbed()
-        .setTitle("NeXt-DeFi Lottery Event Page")
+        .setTitle("Treasures-club Intro Page")
         // 헤드 사진 자리
-        .setDescription(
-          `NXDF is run by Decentralized Autonomous Organization.
-			GNXD staking power always belongs to ownership of community.`
-        )
+        .setDescription(`페이지 샘플 입니다.`)
         // 오른쪽 사진 자리
         // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
-        .setImage("https://storage.googleapis.com/daios/lotto_banner.png")
-        .setURL(
-          `https://nxdf-airdrop.web.app/events/lotto.html?user_id=${user.id}`
-        );
+        .setURL(`https://treasuresclub.io?user_id=${user.id}`);
 
-      await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
-    } else if (_subcommand === "event") {
-      const exampleEmbed = new MessageEmbed()
-        .setTitle("NeXt-DeFi airdrop event page")
-        // 헤드 사진 자리
-        .setDescription(
-          `NXDF is run by Decentralized Autonomous Organization.
-			GNXD staking power always belongs to ownership of community.`
-        )
-        // 오른쪽 사진 자리
-        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
-        .setImage("https://storage.googleapis.com/daios/nxdf_banner.png")
-        .setURL(`https://nxdf-airdrop.web.app/?user_id=${user.id}`);
-
-      await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
     }
   }
