@@ -52,7 +52,7 @@ client.on("interactionCreate", async (interaction) => {
         .setImage(
           "https://storage.googleapis.com/daios/treasures/discord_banner.png"
         )
-        .setURL(`https://treasuresclub.io/?user_id=${user.id}`);
+        .setURL(`https://treasuresclub.io/signup?user_id=${user.id}`);
 
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
     }
