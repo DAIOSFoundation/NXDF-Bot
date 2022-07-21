@@ -4,6 +4,28 @@ const { SlashCommandBuilder, userMention } = require("@discordjs/builders");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { clientId, guildId, token } = require("./config.json");
+const { Client: pgClient } = require("pg");
+
+const dbconfig = {
+  host: "34.64.164.109",
+  user: "postgres",
+  password: "hellowoong",
+  database: "woong",
+  port: "5432",
+  ssl: {
+    rejectUnauthorized: false,
+  },
+};
+
+const pgclient = new pgClient(dbconfig);
+
+pgclient.connect((err) => {
+  if (err) {
+    console.log("Failed to connect db " + err);
+  } else {
+    console.log("Connect to db done!");
+  }
+});
 
 const commands = [
   new SlashCommandBuilder()
