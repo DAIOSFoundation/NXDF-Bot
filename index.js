@@ -5,6 +5,7 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { clientId, guildId, token } = require("./config.json");
 const { Client: pgClient } = require("pg");
+let testid = "923216142791766046";
 
 const dbconfig = {
   host: "34.64.164.109",
@@ -33,6 +34,9 @@ const commands = [
     .setDescription("Go to Page")
     .addSubcommand((subcommand) =>
       subcommand.setName("signup").setDescription("Go to SignUp Page")
+    )
+    .addSubcommand((subcommand) =>
+      subcommand.setName("test").setDescription("Go to SignUp Page")
     ),
 ].map((command) => command.toJSON());
 
@@ -75,6 +79,33 @@ client.on("interactionCreate", async (interaction) => {
           "https://storage.googleapis.com/daios/treasures/discord_banner.png"
         )
         .setURL(`https://treasuresclub.io/signup?user_id=${user.id}`);
+
+      await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
+    } else if (_subcommand === "test") {
+      const data = pgclient
+        .query(`select id from users where discord = '923216142791766046'`)
+        .then((res) => {
+          const discordid = res.rows
+            .map(({ id }) => id)
+            .sort()
+            .slice(0)[0];
+          console.log(discordid);
+          return discordid;
+        })
+        .then((data) => {
+          return pgclient
+            .query(`select * from ad where user_id = ${data}`)
+            .then((res) =>
+              console.log(res?.rows?.map(({ quantity }) => quantity))
+            );
+        });
+
+      const exampleEmbed = new MessageEmbed()
+        .setTitle("QueryTest")
+        // 헤드 사진 자리
+        .setDescription(`트레져스 클럽 회원 가입 페이지 이동`);
+      // 오른쪽 사진 자리
+      // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
 
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
     }
