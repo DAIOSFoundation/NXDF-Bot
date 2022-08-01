@@ -36,7 +36,7 @@ const commands = [
       subcommand.setName("signup").setDescription("Go to SignUp Page")
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName("test").setDescription("Go to SignUp Page")
+      subcommand.setName("getrole").setDescription("Get a Role")
     ),
 ].map((command) => command.toJSON());
 
@@ -63,8 +63,7 @@ client.on("ready", () => {
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
-
-  const { commandName, user, options } = interaction;
+  const { commandName, user, options, guild, member } = interaction;
   const { _subcommand, _hoistedOptions } = options;
 
   if (commandName === "treasures") {
@@ -81,33 +80,50 @@ client.on("interactionCreate", async (interaction) => {
         .setURL(`https://treasuresclub.io/signup?user_id=${user.id}`);
 
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
-    } else if (_subcommand === "test") {
-      const data = pgclient
-        .query(`select id from users where discord = '923216142791766046'`)
-        .then((res) => {
-          const discordid = res.rows
-            .map(({ id }) => id)
-            .sort()
-            .slice(0)[0];
-          console.log(discordid);
-          return discordid;
-        })
-        .then((data) => {
-          return pgclient
-            .query(`select * from ad where user_id = ${data}`)
-            .then((res) =>
-              console.log(res?.rows?.map(({ quantity }) => quantity))
-            );
-        });
+    } else if (_subcommand === "getrole") {
+      let mount = 0;
+      const data = () =>
+        pgclient
+          .query(`select id from users where discord = '${user.id}'`)
+          .then((res) => {
+            const discordid = res.rows
+              .map(({ id }) => id)
+              .sort()
+              .slice(0)[0];
+            return discordid;
+          })
+          .then((data) => {
+            return pgclient
+              .query(`select * from ad where user_id = ${data}`)
+              .then((res) => {
+                res?.rows?.map(({ quantity }) => (mount += Number(quantity)));
+                if (mount != 0) {
+                  client.on("guildMemberAdd", (guildMember) => {
+                    var welcomeRole = guildMember.guild.roles.cache.find(
+                      (role) => role.name === "test"
+                    );
 
-      const exampleEmbed = new MessageEmbed()
-        .setTitle("QueryTest")
-        // 헤드 사진 자리
-        .setDescription(`트레져스 클럽 회원 가입 페이지 이동`);
-      // 오른쪽 사진 자리
-      // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+                    console.log(welcomeRole);
+                  });
+                } else {
+                  var testRole = guild.roles.cache.get("1000650549101854730");
+                  member.roles.add(testRole);
 
-      await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
+                  const exampleEmbed = new MessageEmbed()
+                    .setTitle("RolledTest")
+                    // 헤드 사진 자리
+                    .setDescription(`실험 중입니다`);
+                  // 오른쪽 사진 자리
+                  // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+
+                  return interaction.reply({
+                    embeds: [exampleEmbed],
+                    ephemeral: true,
+                  });
+                }
+              });
+          });
+      data();
     }
   }
 });
