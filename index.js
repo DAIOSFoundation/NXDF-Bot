@@ -102,7 +102,6 @@ client.on("interactionCreate", async (interaction) => {
                     var welcomeRole = guildMember.guild.roles.cache.find(
                       (role) => role.name === "test"
                     );
-
                     console.log(welcomeRole);
                   });
                 } else {
@@ -127,7 +126,6 @@ client.on("interactionCreate", async (interaction) => {
     }
   }
 });
-
 // Login to Discord with your client's token
 client.login(token);
 
