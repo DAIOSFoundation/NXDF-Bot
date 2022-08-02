@@ -404,6 +404,7 @@ src/dist
 build/
 build-test/
 config.json
+config2.json
 *bitcore.config.*
 .bcoin
 
