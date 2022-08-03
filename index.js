@@ -89,11 +89,12 @@ client.on("interactionCreate", async (interaction) => {
           .then((res) => {
             if (res.rows.length == 0) {
               const exampleEmbed = new MessageEmbed()
-                .setTitle("디스코드 아이디가 없습니다.")
-                // 헤드 사진 자리
-                .setDescription(`실험 중입니다`);
-              // 오른쪽 사진 자리
-              // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+                .setTitle("회원가입 하러 가기")
+                .setDescription(`트레져스 클럽 아이디가 없습니다.`)
+                .setImage(
+                  "https://storage.googleapis.com/daios/treasures/discord_banner.png"
+                )
+                .setURL(`https://treasuresclub.io/signup?user_id=${data}`);
 
               return interaction.reply({
                 embeds: [exampleEmbed],
@@ -111,8 +112,8 @@ client.on("interactionCreate", async (interaction) => {
           .then((data) => {
             if (!data) return;
             return (
+              //Db에 디스코드 아이디로 지갑 주소 가져오는 부분
               pgclient
-                //Db에 디스코드 아이디로 지갑 주소 가져오는 부분
                 .query(`select address from ad where user_id = ${data}`)
                 .then((res) => {
                   return res?.rows[0].address;
@@ -122,16 +123,21 @@ client.on("interactionCreate", async (interaction) => {
                   //madapp 에서 지갑주소로 nft 개수 가져오는 부분
                   fetch(`https://treasurelab-api.com/v1/wallet/info/${data}`)
                     .then((res) => res.json())
-                    .then((data) => {
+                    .then(async (data) => {
                       let mount = 0;
                       data.collections.map((data) => (mount += data.quantity));
                       console.log(mount);
                       //총 nft 개수 가져온 후 처리하는 부분
-                      if (mount > 1) {
+                      if (mount < 1) {
+                        var testRole = guild.roles.cache.get(
+                          "1004262985021263963"
+                        );
+                        member.roles.add(testRole);
+
                         const exampleEmbed = new MessageEmbed()
-                          .setTitle("RolledTest")
+                          .setTitle(`nft 가 없습니다. 갯수 : ${mount}`)
                           // 헤드 사진 자리
-                          .setDescription(`실험 중입니다`);
+                          .setDescription(`첫 역할 부여`);
                         // 오른쪽 사진 자리
                         // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
 
@@ -140,12 +146,13 @@ client.on("interactionCreate", async (interaction) => {
                           ephemeral: true,
                         });
                       } else {
+                        var testRole = guild.roles.cache.get(
+                          "1004263023919243374"
+                        );
+                        member.roles.add(testRole);
                         const exampleEmbed = new MessageEmbed()
-                          .setTitle("mount가 없습니다.")
-                          // 헤드 사진 자리
-                          .setDescription(`마운트 실험중`);
-                        // 오른쪽 사진 자리
-                        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+                          .setTitle(`nft 가 1개 이상입니다. 갯수 : ${mount} `)
+                          .setDescription(`두번쨰 역할 부여`);
 
                         return interaction.reply({
                           embeds: [exampleEmbed],
