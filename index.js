@@ -87,65 +87,77 @@ client.on("interactionCreate", async (interaction) => {
         await pgclient
           .query(`select id from users where discord = '${data}'`)
           .then((res) => {
-            const discordid = res.rows
-              .map(({ id }) => id)
-              .sort()
-              .slice(0)[0];
-            console.log(discordid);
-            return discordid;
+            if (res.rows.length == 0) {
+              const exampleEmbed = new MessageEmbed()
+                .setTitle("디스코드 아이디가 없습니다.")
+                // 헤드 사진 자리
+                .setDescription(`실험 중입니다`);
+              // 오른쪽 사진 자리
+              // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+
+              return interaction.reply({
+                embeds: [exampleEmbed],
+                ephemeral: true,
+              });
+            } else {
+              const discordid = res.rows
+                .map(({ id }) => id)
+                .sort()
+                .slice(0)[0];
+              //db에 디스코드 아이디 출력하는 부분
+              return discordid;
+            }
           })
           .then((data) => {
-            return pgclient
-              .query(`select address from ad where user_id = ${data}`)
-              .then((res) => {
-                return res?.rows[0].address;
-              })
-              .then((data) =>
-                fetch(`https://treasurelab-api.com/v1/wallet/info/${data}`)
-                  .then((res) => res.json())
-                  .then((data) => {
-                    let mount = 0;
-                    data.collections.map((data) => (mount += data.quantity));
-                    console.log(mount);
-                  })
-              );
+            if (!data) return;
+            return (
+              pgclient
+                //Db에 디스코드 아이디로 지갑 주소 가져오는 부분
+                .query(`select address from ad where user_id = ${data}`)
+                .then((res) => {
+                  return res?.rows[0].address;
+                })
+                .then((data) => {
+                  console.log(data);
+                  //madapp 에서 지갑주소로 nft 개수 가져오는 부분
+                  fetch(`https://treasurelab-api.com/v1/wallet/info/${data}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                      let mount = 0;
+                      data.collections.map((data) => (mount += data.quantity));
+                      console.log(mount);
+                      //총 nft 개수 가져온 후 처리하는 부분
+                      if (mount > 1) {
+                        const exampleEmbed = new MessageEmbed()
+                          .setTitle("RolledTest")
+                          // 헤드 사진 자리
+                          .setDescription(`실험 중입니다`);
+                        // 오른쪽 사진 자리
+                        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+
+                        return interaction.reply({
+                          embeds: [exampleEmbed],
+                          ephemeral: true,
+                        });
+                      } else {
+                        const exampleEmbed = new MessageEmbed()
+                          .setTitle("mount가 없습니다.")
+                          // 헤드 사진 자리
+                          .setDescription(`마운트 실험중`);
+                        // 오른쪽 사진 자리
+                        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+
+                        return interaction.reply({
+                          embeds: [exampleEmbed],
+                          ephemeral: true,
+                        });
+                      }
+                    });
+                })
+            );
           });
       };
       data(user.id);
-
-      console.log(addr);
-      // .then((addr) => {
-      //           const response = fetch(
-      //             `https://treasurelab-api.com/v1/wallet/info/${addr}`,
-      //             {
-      //               method: "GET",
-      //               headers: {
-      //                 "Content-Type": "application/json",
-      //               },
-      //             }
-      //           );
-      //           return response.json();
-      //         });
-      const response = (addr) => console.log(data);
-      //   fetch(`https://treasurelab-api.com/v1/wallet/info/${addr}`).then(
-      //     (res) => console.log(res)
-      //   );
-      // response();
-
-      // var testRole = guild.roles.cache.get("1000650549101854730");
-      // member.roles.add(testRole);
-
-      const exampleEmbed = new MessageEmbed()
-        .setTitle("RolledTest")
-        // 헤드 사진 자리
-        .setDescription(`실험 중입니다`);
-      // 오른쪽 사진 자리
-      // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
-
-      return interaction.reply({
-        embeds: [exampleEmbed],
-        ephemeral: true,
-      });
     }
   }
 });
