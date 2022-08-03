@@ -84,8 +84,9 @@ client.on("interactionCreate", async (interaction) => {
     } else if (_subcommand === "getrole") {
       let addr = "";
       const data = async (data) => {
+        //제일 처음 부분
         await pgclient
-          .query(`select id from users where discord = '${data}'`)
+          .query(`select id from users where discord = '923216142791766046'`)
           .then((res) => {
             if (res.rows.length == 0) {
               const exampleEmbed = new MessageEmbed()
@@ -125,7 +126,14 @@ client.on("interactionCreate", async (interaction) => {
                     .then((res) => res.json())
                     .then(async (data) => {
                       let mount = 0;
-                      data.collections.map((data) => (mount += data.quantity));
+                      data.collections.map((data) => {
+                        if (
+                          data.address ==
+                          "0x4007cb1fb9d1158add29cf5d88568dd44a1f516e"
+                        ) {
+                          mount += data.quantity;
+                        }
+                      });
                       console.log(mount);
                       //총 nft 개수 가져온 후 처리하는 부분
                       if (mount < 1) {
@@ -135,7 +143,7 @@ client.on("interactionCreate", async (interaction) => {
                         member.roles.add(testRole);
 
                         const exampleEmbed = new MessageEmbed()
-                          .setTitle(`nft 가 없습니다. 갯수 : ${mount}`)
+                          .setTitle(`master nft 가 없습니다. 갯수 : ${mount}`)
                           // 헤드 사진 자리
                           .setDescription(`첫 역할 부여`);
                         // 오른쪽 사진 자리
@@ -151,7 +159,9 @@ client.on("interactionCreate", async (interaction) => {
                         );
                         member.roles.add(testRole);
                         const exampleEmbed = new MessageEmbed()
-                          .setTitle(`nft 가 1개 이상입니다. 갯수 : ${mount} `)
+                          .setTitle(
+                            `master nft 가 1개 이상입니다. 갯수 : ${mount} `
+                          )
                           .setDescription(`두번쨰 역할 부여`);
 
                         return interaction.reply({
