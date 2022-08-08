@@ -5,6 +5,7 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const { clientId, guildId, token } = require("./config.json");
 const { Client: pgClient } = require("pg");
+const fetch = require("node-fetch");
 let testid = "923216142791766046";
 
 const dbconfig = {
@@ -81,48 +82,103 @@ client.on("interactionCreate", async (interaction) => {
 
       await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
     } else if (_subcommand === "getrole") {
-      let mount = 0;
-      const data = () =>
-        pgclient
-          .query(`select id from users where discord = '${user.id}'`)
+      const role_id = "1004367039856656414";
+      const data = async (data) => {
+        //제일 처음 부분
+        await pgclient
+          .query(`select id from users where discord = '${data}'`)
           .then((res) => {
-            const discordid = res.rows
-              .map(({ id }) => id)
-              .sort()
-              .slice(0)[0];
-            return discordid;
+            if (res.rows.length == 0) {
+              const exampleEmbed = new MessageEmbed()
+                .setTitle("회원가입 하러 가기")
+                .setDescription(`트레져스클럽 아이디가 없습니다.`)
+                .setImage(
+                  "https://storage.googleapis.com/daios/treasures/discord_banner.png"
+                )
+                .setURL(`https://treasuresclub.io/signup?user_id=${data}`);
+
+              return interaction.reply({
+                embeds: [exampleEmbed],
+                ephemeral: true,
+              });
+            } else {
+              const discordid = res.rows
+                .map(({ id }) => id)
+                .sort()
+                .slice(0)[0];
+              //db에 디스코드 아이디 출력하는 부분
+              return discordid;
+            }
           })
           .then((data) => {
-            return pgclient
-              .query(`select * from ad where user_id = ${data}`)
-              .then((res) => {
-                res?.rows?.map(({ quantity }) => (mount += Number(quantity)));
-                if (mount != 0) {
-                  client.on("guildMemberAdd", (guildMember) => {
-                    var welcomeRole = guildMember.guild.roles.cache.find(
-                      (role) => role.name === "test"
-                    );
-                    console.log(welcomeRole);
-                  });
-                } else {
-                  var testRole = guild.roles.cache.get("1000650549101854730");
-                  member.roles.add(testRole);
+            if (!data) return;
+            return (
+              //Db에 디스코드 아이디로 지갑 주소 가져오는 부분
+              pgclient
+                .query(`select address from ad where user_id = ${data}`)
+                .then((res) => {
+                  return res?.rows[0].address;
+                })
+                .then((data) => {
+                  //madapp 에서 지갑주소로 nft 개수 가져오는 부분
+                  fetch(`https://treasurelab-api.com/v1/wallet/info/${data}`)
+                    .then((res) => res.json())
+                    .then(async (data) => {
+                      let mount = 0;
+                      data.collections.map((data) => {
+                        if (
+                          data.address ==
+                          "0x4007cb1fb9d1158add29cf5d88568dd44a1f516e"
+                        ) {
+                          mount += data.quantity;
+                        }
+                      });
 
-                  const exampleEmbed = new MessageEmbed()
-                    .setTitle("RolledTest")
-                    // 헤드 사진 자리
-                    .setDescription(`실험 중입니다`);
-                  // 오른쪽 사진 자리
-                  // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
+                      //총 nft 개수 가져온 후 처리하는 부분
+                      if (mount < 1) {
+                        const exampleEmbed = new MessageEmbed()
+                          .setTitle(`롤이 부여되지 않습니다. `)
+                          // 헤드 사진 자리
+                          .setDescription(`master nft 가 없습니다.`);
+                        // 오른쪽 사진 자리
+                        // 제일 큰 사진 자리 이동하는 곳의 로고 들어갈 듯
 
-                  return interaction.reply({
-                    embeds: [exampleEmbed],
-                    ephemeral: true,
-                  });
-                }
-              });
+                        return interaction.reply({
+                          embeds: [exampleEmbed],
+                          ephemeral: true,
+                        });
+                      } else {
+                        const role = member?._roles.filter(
+                          (data) => data === role_id
+                        );
+                        if (role.length != 1) {
+                          var testRole = guild.roles.cache.get(role_id);
+                          member.roles.add(testRole);
+                          const exampleEmbed = new MessageEmbed()
+                            .setTitle(`Collector 롤이 부여되었습니다. `)
+                            .setDescription(`지갑에 master nft 가 존재합니다.`);
+
+                          return interaction.reply({
+                            embeds: [exampleEmbed],
+                            ephemeral: true,
+                          });
+                        }
+
+                        const exampleEmbed = new MessageEmbed()
+                          .setTitle(`Collector 인증 완료 `)
+                          .setDescription(`이미 롤이 부여되었습니다.`);
+
+                        return interaction.reply({
+                          embeds: [exampleEmbed],
+                          ephemeral: true,
+                        });
+                      }
+                    });
+                })
+            );
           });
-      data();
+      };
+      data(user.id);
     }
   }
 });
